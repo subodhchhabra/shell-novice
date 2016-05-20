@@ -3,8 +3,22 @@ layout: page
 title: The Unix Shell
 subtitle: Instructor's Guide
 ---
+*   Why do we learn to use the shell?
+    *   Allows users to automate repetitive tasks
+    *   And capture small data manipulation steps that are normally not recorded
+        to make research reproducible 
+*   The Problem
+    *   Running the same workflow on several samples can be unnecessarily labour intensive
+    *   Manual manipulation of data files:
+        *   is often not captured in documentation
+        *   is hard to reproduce
+        *   is hard to troubleshoot, review, or improve
+*   The Shell 
+    *   Workflows can be automated through the use of shell scripts
+    *   Built-in commands allow for easy data manipulation (e.g. sort, grep, etc.)
+    *   Every step can be captured in the shell script and allow reproducibility and easy troubleshooting
 
-## Legend
+## Overall
 
 Many people have questioned whether we should still teach the shell.
 After all,
@@ -42,7 +56,7 @@ to make their future selves' lives better.
 The third answer is,
 "Because it enables use of many domain-specific tools and compute resources researchers cannot access otherwise."
 Familiarity with the shell is very useful for remote accessing machines, using high-performance computing infrastructure, and running new specialist tools in many disciplines. We do not teach HPC or domain-specific skills
-here but lay the groundwork for further development of these skills. In particular, understand syntax of commands,  flags, and help systems is useful for domain specific tools and understanding the file system (and how to navigate it) is useful for remote access.
+here but lay the groundwork for further development of these skills. In particular, understanding the syntax of commands,  flags, and help systems is useful for domain specific tools and understanding the file system (and how to navigate it) is useful for remote access.
 
 Finally,
 and perhaps most importantly,
@@ -61,58 +75,44 @@ as long as learners using Windows do not run into roadblocks such as:
     and
 *   the shell refusing to run scripts that include DOS line endings.
 
-## Overall
+## Preparing to Teach
 
-*   introduce learners how to interact with the shell, and with related
-    ideas like standard input and output.
-*   focus on the idea that they should get the computer to repeat things
-    rather than doing the job themselves.
-*   teach learners to think about programming in terms of function
-    composition.
+* For a great general list of tips, see [this swcarpentry blog post](http://software-carpentry.org/blog/2015/03/teaching-tips.html)
+* Use the `data` directory for in-workshop exercises and live coding examples.
+You can clone the shell-novice directory or use the `Download ZIP` 
+button on the right to get the entire repository; we also now provide 
+a zip file of the `data` directory that can be downloaded on its own 
+from the repository by right-click + save.  See the "Get Ready" box 
+on the front page of the website for more details.  
+* Website: various practices have been used.
+	* Option 1: Can give links to learners before the lesson so they can follow along, catch up, and see exercises (particularly if you're following the lesson content without many changes).
+	* Option 2: Don't show the website to the learners during the lesson, as it can be distracting - students may read instead of listen, and having another window open is an additional cognitive load.
+	* In any case, make sure to point to website as a post-workshop reference.
+* Content: Unless you have a truly generous amount of time (4+ hours), it is likely that you will not cover ALL the material in this lesson in a single half-day session.  Plan ahead on what you might skip, what you really want to emphasize, etc.
+* Exercises: Think in advance about how you might want to handle exercises during the lesson.  How are you assigning them (website, slide, handout)?  Do you want everyone to try it and then you show the solution?  Have a learner show the solution?  Have groups each do a different exercise and present their solutions?
+* `reference.md` can be printed out and given to students as a reference, your choice.
+* Other preparation: Feel free to add your own examples or side comments, but know that it shouldn't be necessary - the topics and commands can be taught as given on the lesson pages!  If you think there is a place where the lesson is lacking, feel free to raise an [issue](https://github.com/swcarpentry/shell-novice/issues) or submit a [pull request](https://github.com/swcarpentry/shell-novice/pulls).
+*   Optional setup:
+    *   Run `tools/gen-nene.py` to regenerate random data files if needed
+        (some are already in the `data` directory, so you don't have to do this).
+    *   Similarly, run `tools/gen-sequence.py` to regenerate random sequence data if needed.
+
 
 ## Teaching Notes
 
 *   Time estimates:
     *   @gvwilson: 3 hours
+    * @christinalk: in a usual 3 hour session, I can usually cover all of 
+    files/dirs, creating things, pipes filters, and most (although not all) 
+    of the scripts/loops lesson.  I have never taught all 6 modules in 3 hours.  
 
 *   Super cool online resource!  http://explainshell.com/ will dissect any shell command you type in and display help text for each piece.  
 
-*	How to use the materials in the shell-novice repository (or, lesson planning)
-	* For a great general list of tips, see [this swcarpentry blog post](http://software-carpentry.org/blog/2015/03/teaching-tips.html)
-	* Use the `data` directory for in-workshop exercises and live coding examples.
-	You can clone the shell-novice directory or use the `Download ZIP` 
-	button on the right to get the entire repository; we also now provide 
-	a zip file of the `data` directory that can be downloaded on its own 
-	from the repository by right-click + save.  See the "Get Ready" box 
-	on the front page of the website for more details.  
-	* Website: various practices have been used.
-		* Option 1: Can give links to learners before the lesson so they can follow along, catch up, and see exercises (particularly if you're following the lesson content without many changes).
-		* Option 2: Don't show the website to the learners during the lesson, as it can be distracting - students may read instead of listen, and having another window open is an additional cognitive load.
-		* In any case, make sure to point to website as a post-workshop reference.
-	* Content: Unless you have a truly generous amount of time (4+ hours), it is likely that you will not cover ALL the material in this lesson in a single half-day session.  Plan ahead on what you might skip, what you really want to emphasize, etc.
-	* Exercises: Think in advance about how you might want to handle exercises during the lesson.  How are you assigning them (website, slide, handout)?  Do you want everyone to try it and then you show the solution?  Have a learner show the solution?  Have groups each do a different exercise and present their solutions?
-	* `reference.md` can be printed out and given to students as a reference, your choice.
-	* Other preparation: Feel free to add your own examples or side comments, but know that it shouldn't be necessary - the topics and commands can be taught as given on the lesson pages!  If you think there is a place where the lesson is lacking, feel free to raise an [issue](https://github.com/swcarpentry/shell-novice/issues) or submit a [pull request](https://github.com/swcarpentry/shell-novice/pulls).
+*   Resources for "splitting" your shell so that recent commands 
+    remain in view: https://github.com/rgaiacs/swc-shell-split-window
 
-*   Setup:
-    *   Run `tools/gen-nene.py` to regenerate random data files if needed
-        (some are already in the `filesystem` directory).
-    *   Run `tools/gen-sequence.py` to regenerate random sequence data if needed.
-
-
-*   Have learners open a shell
-    and then do `whoami`,
-    `pwd`,
-    and `ls`.
-    Then have them create a directory called `workshop`
-    and `cd` into it,
-    so that everything else they do during the lesson
-    is unlikely to harm whatever files they already have.
-
-*   Get them to run an editor
-    and save a file in their `workshop` directory
-    as early as possible.
-    Doing this is usually the biggest stumbling block during the entire lesson:
+*   Running a text editor from the command line can be 
+    the biggest stumbling block during the entire lesson:
     many will try to run the same editor as the instructor
     (which may leave them trapped in the awful nether hell that is Vim),
     or will not know how to navigate to the right directory
@@ -162,13 +162,22 @@ as long as learners using Windows do not run into roadblocks such as:
     this can be covered instead using the online lessons as guidelines.
     These limitations also have follow-on consequences:
 
-*   It's hard to discuss `#!` (shebang) without first discussing permissions,
-    which we don't do.
+*   It's hard to discuss `#!` (shebang) without first discussing
+    permissions, which we don't do.  `#!` is also [pretty
+    complicated][shebang], so even if we did discuss permissions, we
+    probably still wouldn't want to discuss `#!`.
 
 *   Installing Bash and a reasonable set of Unix commands on Windows
     always involves some fiddling and frustration.
     Please see the latest set of installation guidelines for advice,
     and try it out yourself *before* teaching a class.
+
+*   On Windows machines
+    if `nano` hasn't been properly installed with the
+    [Software Carpentry Windows Installer](http://github.com/swcarpentry/windows-installer)
+    it is possible to use `notepad` as an alternative.  There will be a GUI
+    interface and line endings are treated differently, but otherwise, for
+    the purposes of this lesson, `notepad` and `nano` can be used almost interchangeably.
 
 *   On Windows, it appears that:
 
@@ -216,4 +225,7 @@ but:
 Whatever you use,
 please *test it yourself* on a Windows machine *before* your workshop:
 things may always have changed behind your back since your last workshop.
-And please also make use of our Windows setup helper.
+And please also make use of our
+[Software Carpentry Windows Installer](http://github.com/swcarpentry/windows-installer).
+
+[shebang]: http://www.in-ulm.de/~mascheck/various/shebang/

@@ -26,11 +26,11 @@
       <article>
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
-          <h1 class="title">The Unix Shell</h1>
+                    <a href="index.html"><h1 class="title">The Unix Shell</h1></a>
           <h2 class="subtitle">Finding Things</h2>
-<section class="objectives panel panel-warning">
+          <section class="objectives panel panel-warning">
 <div class="panel-heading">
-<h2 id="learning-objectives"><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
+<h2><span class="glyphicon glyphicon-certificate"></span>Learning Objectives</h2>
 </div>
 <div class="panel-body">
 <ul>
@@ -41,7 +41,7 @@
 </ul>
 </div>
 </section>
-<p>You can guess someone’s age by how they talk about search: young people use “Google” as a verb, while crusty old Unix programmers use “grep”. The word is a contraction of “global/regular expression/print”, a common sequence of operations in early Unix text editors. It is also the name of a very useful command-line program.</p>
+<p>In the same way that many of us now use “Google” as a verb meaning “to find”, Unix programmers often use the word “grep”. “grep” is a contraction of “global/regular expression/print”, a common sequence of operations in early Unix text editors. It is also the name of a very useful command-line program.</p>
 <p><code>grep</code> finds and prints lines in files that match a pattern. For our examples, we will use a file that contains three haikus taken from a 1998 competition in <em>Salon</em> magazine. For this set of examples we’re going to be working in the writing subdirectory:</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cd</span>
 $ <span class="kw">cd</span> writing
@@ -59,7 +59,7 @@ Today it is not working
 Software is like that.</code></pre>
 <aside class="callout panel panel-info">
 <div class="panel-heading">
-<h2 id="forever-or-five-years"><span class="glyphicon glyphicon-pushpin"></span>Forever, or Five Years</h2>
+<h2><span class="glyphicon glyphicon-pushpin"></span>Forever, or Five Years</h2>
 </div>
 <div class="panel-body">
 <p>We haven’t linked to the original haikus because they don’t appear to be on <em>Salon</em>’s site any longer. As <a href="http://www.clir.org/pubs/archives/ensuring.pdf">Jeff Rothenberg said</a>, “Digital information lasts forever — or five years, whichever comes first.”</p>
@@ -77,24 +77,27 @@ Today it is not working</code></pre>
 Today it is not working</code></pre>
 <p>This time, two lines that include the letters “day” are outputted. However, these letters are contained within larger words. To restrict matches to lines containing the word “day” on its own, we can give <code>grep</code> with the <code>-w</code> flag. This will limit matches to word boundaries.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> -w day haiku.txt</code></pre>
-<p>In this case, there aren’t any, so <code>grep</code>’s output is empty.</p>
+<p>In this case, there aren’t any, so <code>grep</code>’s output is empty. Sometimes we don’t want to search for a single word, but a phrase. This is also easy to do with <code>grep</code> by putting the phrase in quotes.</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> -w <span class="st">&quot;is not&quot;</span> haiku.txt</code></pre>
+<pre class="output"><code>Today it is not working</code></pre>
+<p>We’ve now seen that you don’t have to have quotes around single words, but it is useful to use quotes when searching for multiple words. It also helps to make it easier to distinguish between the search term or phrase and the file being searched. We will use quotes in the remaining examples.</p>
 <p>Another useful option is <code>-n</code>, which numbers the lines that match:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> -n it haiku.txt</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> -n <span class="st">&quot;it&quot;</span> haiku.txt</code></pre>
 <pre class="output"><code>5:With searching comes loss
 9:Yesterday it worked
 10:Today it is not working</code></pre>
 <p>Here, we can see that lines 5, 9, and 10 contain the letters “it”.</p>
 <p>We can combine options (i.e. flags) as we do with other Unix commands. For example, let’s find the lines that contain the word “the”. We can combine the option <code>-w</code> to find the lines that contain the word “the” and <code>-n</code> to number the lines that match:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> -n -w the haiku.txt</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> -n -w <span class="st">&quot;the&quot;</span> haiku.txt</code></pre>
 <pre class="output"><code>2:Is not the true Tao, until
 6:and the presence of absence:</code></pre>
 <p>Now we want to use the option <code>-i</code> to make our search case-insensitive:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> -n -w -i the haiku.txt</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> -n -w -i <span class="st">&quot;the&quot;</span> haiku.txt</code></pre>
 <pre class="output"><code>1:The Tao that is seen
 2:Is not the true Tao, until
 6:and the presence of absence:</code></pre>
 <p>Now, we want to use the option <code>-v</code> to invert our search, i.e., we want to output the lines that do not contain the word “the”.</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> -n -w -v the haiku.txt </code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> -n -w -v <span class="st">&quot;the&quot;</span> haiku.txt</code></pre>
 <pre class="output"><code>1:The Tao that is seen
 3:You bring fresh toner.
 4:
@@ -104,7 +107,39 @@ Today it is not working</code></pre>
 9:Yesterday it worked
 10:Today it is not working
 11:Software is like that.</code></pre>
-<p><code>grep</code> has lots of other options. To find out what they are, we can type <code>man grep</code>. <code>man</code> is the Unix “manual” command: it prints a description of a command and its options, and (if you’re lucky) provides a few examples of how to use it.</p>
+<p><code>grep</code> has lots of other options. To find out what they are, we can type:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> --help</code></pre>
+<pre class="output"><code>Usage: grep [OPTION]... PATTERN [FILE]...
+Search for PATTERN in each FILE or standard input.
+PATTERN is, by default, a basic regular expression (BRE).
+Example: grep -i &#39;hello world&#39; menu.h main.c
+
+Regexp selection and interpretation:
+  -E, --extended-regexp     PATTERN is an extended regular expression (ERE)
+  -F, --fixed-strings       PATTERN is a set of newline-separated fixed strings
+  -G, --basic-regexp        PATTERN is a basic regular expression (BRE)
+  -P, --perl-regexp         PATTERN is a Perl regular expression
+  -e, --regexp=PATTERN      use PATTERN for matching
+  -f, --file=FILE           obtain PATTERN from FILE
+  -i, --ignore-case         ignore case distinctions
+  -w, --word-regexp         force PATTERN to match only whole words
+  -x, --line-regexp         force PATTERN to match only whole lines
+  -z, --null-data           a data line ends in 0 byte, not newline
+
+Miscellaneous:
+...        ...        ...
+
+</code></pre>
+<p>Many bash commands, and programs that people have written that can be run from within bash, support a <code>--help</code> flag to display more information on how to use the commands or programs.</p>
+<p>For more information on how to use <code>grep</code> we can type <code>man grep</code>. <code>man</code> is the Unix “manual” command: it prints a description of a command and its options, and (if you’re lucky) provides a few examples of how to use it.</p>
+<aside class="callout panel panel-info">
+<div class="panel-heading">
+<h2><span class="glyphicon glyphicon-pushpin"></span><code>man</code> and Git for Windows</h2>
+</div>
+<div class="panel-body">
+<p>The bash shell provided by Git for Windows does not support the <code>man</code> command. Doing a web search for <code>unix man page COMMAND</code> (e.g. <code>unix man page grep</code>) provides links to numerous copies of the Unix manual pages online. For example, GNU provides links to its <a href="http://www.gnu.org/manual/manual.html">manuals</a>: these include <a href="http://www.gnu.org/software/grep/manual/">grep</a>, and the <a href="http://www.gnu.org/software/coreutils/manual/coreutils.html">core GNU utilities</a>, which covers many commands introduced within this lesson.</p>
+</div>
+</aside>
 <p>To navigate through the <code>man</code> pages, you may use the up and down arrow keys to move line-by-line, or try the “b” and spacebar keys to skip up and down by full page. Quit the <code>man</code> pages by typing “q”.</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">man</span> grep</code></pre>
 <pre class="output"><code>GREP(1)                                                                                              GREP(1)
@@ -142,7 +177,7 @@ matched.  (-F is specified by POSIX.)
 ...        ...        ...</code></pre>
 <aside class="callout panel panel-info">
 <div class="panel-heading">
-<h2 id="wildcards"><span class="glyphicon glyphicon-pushpin"></span>Wildcards</h2>
+<h2><span class="glyphicon glyphicon-pushpin"></span>Wildcards</h2>
 </div>
 <div class="panel-body">
 <p><code>grep</code>‘s real power doesn’t come from its options, though; it comes from the fact that patterns can include wildcards. (The technical name for these is <strong>regular expressions</strong>, which is what the “re” in “grep” stands for.) Regular expressions are both complex and powerful; if you want to do complex searches, please look at the lesson on <a href="http://software-carpentry.org/v4/regexp/index.html">our website</a>. As a taster, we can find lines that have an ’o’ in the second position like this:</p>
@@ -150,15 +185,14 @@ matched.  (-F is specified by POSIX.)
 You bring fresh toner.
 Today it is not working
 Software is like that.</code></pre>
-<p>We use the <code>-E</code> flag and put the pattern in quotes to prevent the shell from trying to interpret it. (If the pattern contained a ‘*’, for example, the shell would try to expand it before running <code>grep</code>.) The ‘^’ in the pattern anchors the match to the start of the line. The ‘.’ matches a single character (just like ‘?’ in the shell), while the ‘o’ matches an actual ‘o’.</p>
+<p>We use the <code>-E</code> flag and put the pattern in quotes to prevent the shell from trying to interpret it. (If the pattern contained a <code>*</code>, for example, the shell would try to expand it before running <code>grep</code>.) The <code>^</code> in the pattern anchors the match to the start of the line. The <code>.</code> matches a single character (just like <code>?</code> in the shell), while the <code>o</code> matches an actual ‘o’.</p>
 </div>
 </aside>
 <p>While <code>grep</code> finds lines in files, the <code>find</code> command finds files themselves. Again, it has a lot of options; to show how the simplest ones work, we’ll use the directory tree shown below.</p>
 <div class="figure">
-<img src="fig/find-file-tree.svg" alt="File Tree for Find Example" />
-<p class="caption">File Tree for Find Example</p>
+<img src="fig/find-file-tree.svg" alt="File Tree for Find Example" /><p class="caption">File Tree for Find Example</p>
 </div>
-<p>Nelle’s <code>writing</code> directory contains one file called <code>haiku.txt</code> and four subdirectories: <code>thesis</code> (which is sadly empty), <code>data</code> (which contains two files <code>one.txt</code> and <code>two.txt</code>), a <code>tools</code> directory that contains the programs <code>format</code> and <code>stats</code>, and an empty subdirectory called <code>old</code>.</p>
+<p>Nelle’s <code>writing</code> directory contains one file called <code>haiku.txt</code> and four subdirectories: <code>thesis</code> (which contains a sadly empty file, <code>empty-draft.md</code>), <code>data</code> (which contains two files <code>one.txt</code> and <code>two.txt</code>), a <code>tools</code> directory that contains the programs <code>format</code> and <code>stats</code>, and a subdirectory called <code>old</code>, with a file <code>oldtool</code>.</p>
 <p>For our first command, let’s run <code>find . -type d</code>. As always, the <code>.</code> on its own means the current working directory, which is where we want our search to start; <code>-type d</code> means “things that are directories”. Sure enough, <code>find</code>’s output is the names of the five directories in our little tree (including <code>.</code>):</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">find</span> . -type d</code></pre>
 <pre class="output"><code>./
@@ -197,7 +231,7 @@ Software is like that.</code></pre>
 ./haiku.txt</code></pre>
 <aside class="callout panel panel-info">
 <div class="panel-heading">
-<h2 id="listing-vs.finding"><span class="glyphicon glyphicon-pushpin"></span>Listing vs. Finding</h2>
+<h2><span class="glyphicon glyphicon-pushpin"></span>Listing vs. Finding</h2>
 </div>
 <div class="panel-body">
 <p><code>ls</code> and <code>find</code> can be made to do similar things given the right options, but under normal circumstances, <code>ls</code> lists everything it can, while <code>find</code> searches for things with certain properties and shows them.</p>
@@ -214,11 +248,11 @@ Software is like that.</code></pre>
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">wc</span> -l ./data/one.txt ./data/two.txt ./haiku.txt</code></pre>
 <p>which is what we wanted. This expansion is exactly what the shell does when it expands wildcards like <code>*</code> and <code>?</code>, but lets us use any command we want as our own “wildcard”.</p>
 <p>It’s very common to use <code>find</code> and <code>grep</code> together. The first finds files that match a pattern; the second looks for lines inside those files that match another pattern. Here, for example, we can find PDB files that contain iron atoms by looking for the string “FE” in all the <code>.pdb</code> files above the current directory:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> FE <span class="ot">$(</span><span class="kw">find</span> .. -name <span class="st">&#39;*.pdb&#39;</span><span class="ot">)</span></code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">grep</span> <span class="st">&quot;FE&quot;</span> <span class="ot">$(</span><span class="kw">find</span> .. -name <span class="st">&#39;*.pdb&#39;</span><span class="ot">)</span></code></pre>
 <pre class="output"><code>../data/pdb/heme.pdb:ATOM     25 FE           1      -0.924   0.535  -0.518</code></pre>
 <aside class="callout panel panel-info">
 <div class="panel-heading">
-<h2 id="binary-files"><span class="glyphicon glyphicon-pushpin"></span>Binary Files</h2>
+<h2><span class="glyphicon glyphicon-pushpin"></span>Binary Files</h2>
 </div>
 <div class="panel-body">
 <p>We have focused exclusively on finding things in text files. What if your data is stored as images, in databases, or in some other format? One option would be to extend tools like <code>grep</code> to handle those formats. This hasn’t happened, and probably won’t, because there are too many formats to support.</p>
@@ -229,7 +263,7 @@ Software is like that.</code></pre>
 <p>The Unix shell is older than most of the people who use it. It has survived so long because it is one of the most productive programming environments ever created — maybe even <em>the</em> most productive. Its syntax may be cryptic, but people who have mastered it can experiment with different commands interactively, then use what they have learned to automate their work. Graphical user interfaces may be better at the first, but the shell is still unbeaten at the second. And as Alfred North Whitehead wrote in 1911, “Civilization advances by extending the number of important operations which we can perform without thinking about them.”</p>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="using-grep"><span class="glyphicon glyphicon-pencil"></span>Using grep</h2>
+<h2><span class="glyphicon glyphicon-pencil"></span>Using grep</h2>
 </div>
 <div class="panel-body">
 <pre><code>The Tao that is seen
@@ -244,41 +278,41 @@ Yesterday it worked
 Today it is not working
 Software is like that.</code></pre>
 <p>From the above text, contained in the file <code>haiku.txt</code>, which command would result in the following output:</p>
-<pre><code>and the presence of absence</code></pre>
+<pre><code>and the presence of absence:</code></pre>
 <ol style="list-style-type: decimal">
-<li><code>grep of haiku.txt</code></li>
-<li><code>grep -E of haiku.txt</code></li>
-<li><code>grep -w of haiku.txt</code></li>
-<li><code>grep -i of haiku.txt</code></li>
+<li><code>grep &quot;of&quot; haiku.txt</code></li>
+<li><code>grep -E &quot;of&quot; haiku.txt</code></li>
+<li><code>grep -w &quot;of&quot; haiku.txt</code></li>
+<li><code>grep -i &quot;of&quot; haiku.txt</code></li>
 </ol>
 </div>
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="find-pipeline-reading-comprehension"><span class="glyphicon glyphicon-pencil"></span><code>find</code> pipeline reading comprehension</h2>
+<h2><span class="glyphicon glyphicon-pencil"></span><code>find</code> pipeline reading comprehension</h2>
 </div>
 <div class="panel-body">
 <p>Write a short explanatory comment for the following shell script:</p>
-<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">find</span> . -name <span class="st">&#39;*.dat&#39;</span> <span class="kw">|</span> <span class="kw">wc</span> -l <span class="kw">|</span> <span class="kw">sort</span> -n</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">wc</span> -l <span class="ot">$(</span><span class="kw">find</span> . -name <span class="st">&#39;*.dat&#39;</span><span class="ot">)</span> <span class="kw">|</span> <span class="kw">sort</span> -n</code></pre>
 </div>
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="matching-ose.dat-but-not-temp"><span class="glyphicon glyphicon-pencil"></span>Matching <code>ose.dat</code> but not <code>temp</code></h2>
+<h2><span class="glyphicon glyphicon-pencil"></span>Matching <code>ose.dat</code> but not <code>temp</code></h2>
 </div>
 <div class="panel-body">
 <p>The <code>-v</code> flag to <code>grep</code> inverts pattern matching, so that only lines which do <em>not</em> match the pattern are printed. Given that, which of the following commands will find all files in <code>/data</code> whose names end in <code>ose.dat</code> (e.g., <code>sucrose.dat</code> or <code>maltose.dat</code>), but do <em>not</em> contain the word <code>temp</code>?</p>
 <ol style="list-style-type: decimal">
 <li><p><code>find /data -name '*.dat' | grep ose | grep -v temp</code></p></li>
 <li><p><code>find /data -name ose.dat | grep -v temp</code></p></li>
-<li><p><code>grep -v temp $(find /data -name '*ose.dat')</code></p></li>
+<li><p><code>grep -v &quot;temp&quot; $(find /data -name '*ose.dat')</code></p></li>
 <li><p>None of the above.</p></li>
 </ol>
 </div>
 </section>
 <section class="challenge panel panel-success">
 <div class="panel-heading">
-<h2 id="little-women"><span class="glyphicon glyphicon-pencil"></span>Little Women</h2>
+<h2><span class="glyphicon glyphicon-pencil"></span>Little Women</h2>
 </div>
 <div class="panel-body">
 <p>You and your friend, having just finished reading <em>Little Women</em> by Louisa May Alcott, are in an argument. Of the four sisters in the book, Jo, Meg, Beth, and Amy, your friend thinks that Jo was the most mentioned. You, however, are certain it was Amy. Luckily, you have a file <code>LittleWomen.txt</code> containing the full text of the novel. Using a<code>for</code> loop, how would you tabulate the number of times each of the four sisters is mentioned? Hint: one solution might employ the commands <code>grep</code> and <code>wc</code> and a <code>|</code>, while another might utilize <code>grep</code> options.</p>
@@ -297,5 +331,16 @@ Software is like that.</code></pre>
     <!-- Javascript placed at the end of the document so the pages load faster -->
     <script src="http://software-carpentry.org/v5/js/jquery-1.9.1.min.js"></script>
     <script src="css/bootstrap/bootstrap-js/bootstrap.js"></script>
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    
+      ga('create', 'UA-37305346-2', 'auto');
+      ga('send', 'pageview');
+    
+    </script>
   </body>
 </html>

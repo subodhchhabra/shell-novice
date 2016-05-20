@@ -13,15 +13,14 @@ minutes: 15
 
 We now know how to explore files and directories,
 but how do we create them in the first place?
-Let's go back to Nelle's home directory,
-`/Users/nelle`,
+Let's go back to our `data-shell` directory on the Desktop
 and use `ls -F` to see what it contains:
 
 ~~~ {.bash}
 $ pwd
 ~~~
 ~~~ {.output}
-/Users/nelle
+/Users/nelle/Desktop/data-shell
 ~~~
 ~~~ {.bash}
 $ ls -F
@@ -80,7 +79,9 @@ $ nano draft.txt
 > [Vim](http://www.vim.org/) (both of which are completely unintuitive,
 > even by Unix standards), or a graphical editor such as
 > [Gedit](http://projects.gnome.org/gedit/). On Windows, you may wish to
-> use [Notepad++](http://notepad-plus-plus.org/).
+> use [Notepad++](http://notepad-plus-plus.org/).  Windows also has a built-in 
+> editor called `notepad` that can be run from the command line in the same 
+> way as `nano` for the purposes of this lesson.  
 >
 > No matter what editor you use, you will need to know where it searches
 > for and saves files. If you start it from the shell, it will (probably)
@@ -89,14 +90,30 @@ $ nano draft.txt
 > documents directory instead. You can change this by navigating to
 > another directory the first time you "Save As..."
 
-Let's type in a few lines of text,
-then use Control-O to write our data to disk:
+Let's type in a few lines of text.
+Once we're happy with out text, we can press Ctrl-O (press the Ctrl key and, while
+holding it down, press the O key) to write our data to disk
+(we'll be asked what file we want to save this to:
+press Return to accept the suggested default of `draft.txt`).
 
 ![Nano in action](fig/nano-screenshot.png)
 
-Once our file is saved,
-we can use Control-X to quit the editor and return to the shell.
-(Unix documentation often uses the shorthand `^A` to mean "control-A".)
+Once our file is saved, we can use Ctrl-X to quit the editor and 
+return to the shell.
+
+> ## Ctrl, "Control", key {.callout}
+>
+> The Ctrl key is called the "Control" key. There are various ways
+> in which using the Ctrl key may be described. For example, you may
+> see an instruction to press the Ctrl key and, while holding it down, 
+> press the X key, described as any of:
+>
+> * Ctrl-X
+> * Ctrl+X
+> * Control-X
+> * Control+X
+> * `^X`
+
 `nano` doesn't leave any output on the screen after it exits,
 but `ls` now shows that we have created a file called `draft.txt`:
 
@@ -113,7 +130,7 @@ Let's tidy up by running `rm draft.txt`:
 $ rm draft.txt
 ~~~
 
-This command removes files ("rm" is short for "remove").
+This command removes files (`rm` is short for "remove").
 If we run `ls` again,
 its output is empty once more,
 which tells us that our file is gone:
@@ -248,6 +265,11 @@ $ ls thesis
 quotes.txt
 ~~~
 
+One has to be careful when specifying the target file name, since `mv` will 
+silently overwrite any existing file with the same name, which could 
+lead to data loss. An additional flag, `mv -i` (or `mv --interactive`),
+can be used to make `mv` ask you for confirmation before overwriting. 
+
 Just for the sake of inconsistency,
 `mv` also works on directories --- there is no separate `mvdir` command.
 
@@ -311,13 +333,28 @@ thesis/quotations.txt
 This time it tells us that it can't find `quotes.txt` in the current directory,
 but it does find the copy in `thesis` that we didn't delete.
 
-> ## Another Useful Abbreviation {.callout}
+> ## What's In A Name? {.callout}
 >
-> The shell interprets the character `~` (tilde) at the start of a path to
-> mean "the current user's home directory". For example, if Nelle's home
-> directory is `/Users/nelle`, then `~/data` is equivalent to
-> `/Users/nelle/data`. This only works if it is the first character in the
-> path: `here/there/~/elsewhere` is *not* `/Users/nelle/elsewhere`.
+> You may have noticed that all of Nelle's files' names are "something dot
+> something", and in this part of the lesson, we always used the extension 
+> `.txt`.  This is just a convention: we can call a file `mythesis` or
+> almost anything else we want. However, most people use two-part names
+> most of the time to help them (and their programs) tell different kinds
+> of files apart. The second part of such a name is called the
+> **filename extension**, and indicates
+> what type of data the file holds: `.txt` signals a plain text file, `.pdf`
+> indicates a PDF document, `.cfg` is a configuration file full of parameters
+> for some program or other, `.png` is a PNG image, and so on.
+>
+> This is just a convention, albeit an important one. Files contain
+> bytes: it's up to us and our programs to interpret those bytes
+> according to the rules for plain text files, PDF documents, configuration
+> files, images, and so on.
+>
+> Naming a PNG image of a whale as `whale.mp3` doesn't somehow
+> magically turn it into a recording of whalesong, though it *might*
+> cause the operating system to try to open it with a music player
+> when someone double-clicks it.
 
 > ## Renaming files {.challenge}
 >
@@ -352,19 +389,22 @@ but it does find the copy in `thesis` that we didn't delete.
 > 3.   `proteins.dat recombine`
 > 4.   `proteins-saved.dat`
 
-> ## Listing Directories and Files {.challenge}
+> ## Organizing Directories and Files {.challenge}
 >
-> Suppose that:
+> Jamie is working on a project and she sees that her files aren't very well
+> organized:
 >
 > ~~~
 > $ ls -F
 > analyzed/  fructose.dat    raw/   sucrose.dat
 > ~~~
 >
-> What command(s) could you run so that the commands below will produce the output shown?
+> The `fructose.dat` and `sucrose.dat` files contain output from her data
+> analysis. What command(s) covered in this lesson does she need to run so that the commands below will
+> produce the output shown?
 >
 > ~~~
-> $ ls
+> $ ls -F
 > analyzed/   raw/
 > $ ls analyzed
 > fructose.dat    sucrose.dat

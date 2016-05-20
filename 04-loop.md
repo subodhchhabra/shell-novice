@@ -9,38 +9,39 @@ minutes: 15
 > *   Write a loop that applies one or more commands separately to each file in a set of files.
 > *   Trace the values taken on by a loop variable during execution of the loop.
 > *   Explain the difference between a variable's name and its value.
-> *   Explain why spaces and some punctuation characters shouldn't be used in files' names.
+> *   Explain why spaces and some punctuation characters shouldn't be used in file names.
 > *   Demonstrate how to see what commands have recently been executed.
 > *   Re-run recently executed commands without retyping them.
 
-Wildcards and tab completion are two ways to reduce typing (and typing mistakes).
-Another is to tell the shell to do something over and over again.
+**Loops** are key to productivity improvements through automation as they allow us to execute 
+commands repetitively. Similar to wildcards and tab completion, using loops also reduces the 
+amount of typing (and typing mistakes).
 Suppose we have several hundred genome data files named `basilisk.dat`, `unicorn.dat`, and so on.
 In this example,
 we'll use the `creatures` directory which only has two example files,
 but the principles can be applied to many many more files at once.
-We would like to modify these files, but also save a version of the original files and rename them 
-as `original-basilisk.dat` and `original-unicorn.dat`.
+We would like to modify these files, but also save a version of the original files, naming the copies
+`original-basilisk.dat` and `original-unicorn.dat`.
 We can't use:
 
 ~~~ {.bash}
-$ mv *.dat original-*.dat
+$ cp *.dat original-*.dat
 ~~~
 
 because that would expand to:
 
 ~~~ {.bash}
-$ mv basilisk.dat unicorn.dat original-*.dat
+$ cp basilisk.dat unicorn.dat original-*.dat
 ~~~
 
-This wouldn't back up our files, instead we get an error
+This wouldn't back up our files, instead we get an error:
 
 ~~~ {.error}
-mv: target `original-*.dat' is not a directory
+cp: target `original-*.dat' is not a directory
 ~~~
 
-This a problem arises when `mv` receives more than two inputs. When this happens, it
-expects the last input to be a directory where it can move all the files it was passed.
+This problem arises when `cp` receives more than two inputs. When this happens, it
+expects the last input to be a directory where it can copy all the files it was passed.
 Since there is no directory named `original-*.dat` in the `creatures` directory we get an
 error.
 
@@ -51,7 +52,7 @@ Here's a simple example that displays the first three lines of each file in turn
 ~~~ {.bash}
 $ for filename in basilisk.dat unicorn.dat
 > do
->    head -3 $filename
+>    head -n 3 $filename
 > done
 ~~~
 ~~~ {.output}
@@ -90,7 +91,21 @@ so this loop prints out the first three lines of each data file in turn.
 >
 > The shell prompt changes from `$` to `>` and back again as we were
 > typing in our loop. The second prompt, `>`, is different to remind
-> us that we haven't finished typing a complete command yet.
+> us that we haven't finished typing a complete command yet. A semicolon, `;`, 
+> can be used to separate two commands written on a single line.
+
+> ## Same symbols, different meanings {.callout}
+>
+> Here we see `>` being used a shell prompt, whereas `>` is also
+> used to redirect output.
+> Similarly, `$` is used as a shell prompt, but, as we saw earler,
+> it is also used to ask the shell to get the value of a variable.
+>
+> If the *shell* prints `>` or `$` then it expects you to type something,
+> and the symbol is a prompt.
+>
+> If *you* type `>` or `$` yourself, it is an instruction from you that
+> the shell to redirect output or get the value of a variable.
 
 We have called the variable in this loop `filename`
 in order to make its purpose clearer to human readers.
@@ -100,7 +115,7 @@ if we wrote this loop as:
 ~~~ {.bash}
 for x in basilisk.dat unicorn.dat
 do
-    head -3 $x
+    head -n 3 $x
 done
 ~~~
 
@@ -109,7 +124,7 @@ or:
 ~~~ {.bash}
 for temperature in basilisk.dat unicorn.dat
 do
-    head -3 $temperature
+    head -n 3 $temperature
 done
 ~~~
 
@@ -125,7 +140,7 @@ Here's a slightly more complicated loop:
 for filename in *.dat
 do
     echo $filename
-    head -100 $filename | tail -20
+    head -n 100 $filename | tail -n 20
 done
 ~~~
 
@@ -154,7 +169,7 @@ Note that we can't write this as:
 for filename in *.dat
 do
     $filename
-    head -100 $filename | tail -20
+    head -n 100 $filename | tail -n 20
 done
 ~~~
 
@@ -179,7 +194,7 @@ the `head` and `tail` combination selects lines 81-100 from whatever file is bei
 > ~~~
 > for filename in *.dat
 > do
->     head -100 $filename | tail -20
+>     head -n 100 $filename | tail -n 20
 > done
 > ~~~
 > 
@@ -210,35 +225,35 @@ the `head` and `tail` combination selects lines 81-100 from whatever file is bei
 > ~~~
 > for filename in *.dat
 > do
->     head -100 "$filename" | tail -20
+>     head -n 100 "$filename" | tail -n 20
 > done
 > ~~~
 >
 > but it's simpler just to avoid using spaces (or other special characters) in filenames.
 
-Going back to our original file renaming problem,
+Going back to our original file copying problem,
 we can solve it using this loop:
 
 ~~~ {.bash}
 for filename in *.dat
 do
-    mv $filename original-$filename
+    cp $filename original-$filename
 done
 ~~~
 
-This loop runs the `mv` command once for each filename.
+This loop runs the `cp` command once for each filename.
 The first time,
 when `$filename` expands to `basilisk.dat`,
 the shell executes:
 
 ~~~ {.bash}
-mv basilisk.dat original-basilisk.dat
+cp basilisk.dat original-basilisk.dat
 ~~~
 
 The second time, the command is:
 
 ~~~ {.bash}
-mv unicorn.dat original-unicorn.dat
+cp unicorn.dat original-unicorn.dat
 ~~~
 
 > ## Measure Twice, Run Once {.callout}
@@ -246,25 +261,25 @@ mv unicorn.dat original-unicorn.dat
 > A loop is a way to do many things at once --- or to make many mistakes at
 > once if it does the wrong thing. One way to check what a loop *would* do
 > is to echo the commands it would run instead of actually running them.
-> For example, we could write our file renaming loop like this:
+> For example, we could write our file copying loop like this:
 > 
 > ~~~
 > for filename in *.dat
 > do
->     echo mv $filename original-$filename
+>     echo cp $filename original-$filename
 > done
 > ~~~
 > 
-> Instead of running `mv`, this loop runs `echo`, which prints out:
+> Instead of running `cp`, this loop runs `echo`, which prints out:
 > 
 > ~~~
-> mv basilisk.dat original-basilisk.dat
-> mv unicorn.dat original-unicorn.dat
+> cp basilisk.dat original-basilisk.dat
+> cp unicorn.dat original-unicorn.dat
 > ~~~
 > 
 > *without* actually running those commands. We can then use up-arrow to
 > redisplay the loop, back-arrow to get to the word `echo`, delete it, and
-> then press "enter" to run the loop with the actual `mv` commands. This
+> then press Enter to run the loop with the actual `cp` commands. This
 > isn't foolproof, but it's a handy way to see what's going to happen when
 > you're still learning how loops work.
 
@@ -329,18 +344,18 @@ $ for datafile in *[AB].txt; do echo $datafile stats-$datafile; done
 ~~~
 
 Using the left arrow key,
-Nelle backs up and changes the command `echo` to `goostats`:
+Nelle backs up and changes the command `echo` to `bash goostats`:
 
 ~~~ {.bash}
 $ for datafile in *[AB].txt; do bash goostats $datafile stats-$datafile; done
 ~~~
 
-When she presses enter,
+When she presses Enter,
 the shell runs the modified command.
 However, nothing appears to happen --- there is no output.
 After a moment, Nelle realizes that since her script doesn't print anything to the screen any longer,
 she has no idea whether it is running, much less how quickly.
-She kills the job by typing Control-C,
+She kills the running command by typing Ctrl-C,
 uses up-arrow to repeat the command,
 and edits it to read:
 
@@ -350,9 +365,8 @@ $ for datafile in *[AB].txt; do echo $datafile; bash goostats $datafile stats-$d
 
 > ## Beginning and End {.callout}
 >
-> We can move to the beginning of a line in the shell by typing `^A`
-> (which means Control-A)
-> and to the end using `^E`.
+> We can move to the beginning of a line in the shell by typing Ctrl-A
+> and to the end using Ctrl-E.
 
 When she runs her program now,
 it produces one line of output every five seconds or so:
@@ -383,7 +397,7 @@ so she decides to get some coffee and catch up on her reading.
 > repeat one of those commands. For example, if Nelle types this:
 > 
 > ~~~
-> $ history | tail -5
+> $ history | tail -n 5
 >   456  ls -l NENE0*.txt
 >   457  rm stats-NENE01729B.txt.txt
 >   458  bash goostats NENE01729B.txt stats-NENE01729B.txt
@@ -393,6 +407,17 @@ so she decides to get some coffee and catch up on her reading.
 > 
 > then she can re-run `goostats` on `NENE01729B.txt` simply by typing
 > `!458`.
+
+> ## Other history commands {.callout}
+>
+> There are a number of other shortcut commands for getting at the history.
+> Two of the more useful are `!!`, which retrieves the immediately
+> preceding command (you may or may not find this more convenient than
+> plain up-arrow), and `!$`, which retrieves the last word of the last
+> command.  That's useful more often than you might expect: after
+> `bash goostats NENE01729B.txt stats-NENE01729B.txt`, you can type
+> `less !$` to look at the file `stats-NENE01729B.txt`, which is
+> quicker than doing up-arrow and editing the command-line.
 
 > ## Variables in Loops {.challenge}
 > 
@@ -434,12 +459,11 @@ so she decides to get some coffee and catch up on her reading.
 > done
 > ~~~
 > 
-> 1.  Prints `fructose.dat`, `glucose.dat`, and `sucrose.dat`, and
->     copies `sucrose.dat` to create `xylose.dat`.
-> 2.  Prints `fructose.dat`, `glucose.dat`, and `sucrose.dat`, and
->     concatenates all three files to create `xylose.dat`.
+> 1.  Prints `fructose.dat`, `glucose.dat`, and `sucrose.dat`, and the text from `sucrose.dat` will be saved to a file called `xylose.dat`.
+> 2.  Prints `fructose.dat`, `glucose.dat`, and `sucrose.dat`, and the text from all three files would be 
+>     concatenated and saved to a file called `xylose.dat`.
 > 3.  Prints `fructose.dat`, `glucose.dat`, `sucrose.dat`, and
->     `xylose.dat`, and copies `sucrose.dat` to create `xylose.dat`.
+>     `xylose.dat`, and the text from `sucrose.dat` will be saved to a file called `xylose.dat`.
 > 4.  None of the above.
 
 > ## Saving to a File in a Loop - Part Two {.challenge}
@@ -479,7 +503,7 @@ so she decides to get some coffee and catch up on her reading.
 > done
 > ~~~
 >
-> What is the difference between the the two loops below, and which one would we
+> What is the difference between the two loops below, and which one would we
 > want to run?
 >
 > ~~~ {.bash}
@@ -498,26 +522,19 @@ so she decides to get some coffee and catch up on her reading.
 > done
 > ~~~
 
-> ## Nested Loops and Command-Line Expressions {.challenge}
+> ## Nested Loops {.challenge}
 >
-> The `expr` does simple arithmetic using command-line parameters:
-> 
+> Suppose we want to set up up a directory structure to organize
+> some experiments measuring the growth rate under different sugar
+> types *and* different temperatures.  What would be the
+> result of the following code:
+>
 > ~~~
-> $ expr 3 + 5
-> 8
-> $ expr 30 / 5 - 2
-> 4
-> ~~~
-> 
-> Given this, what is the output of:
-> 
-> ~~~
-> for left in 2 3
+> for sugar in fructose glucose sucrose
 > do
->     for right in $left
+>     for temperature in 25 30 37 40
 >     do
->         expr $left + $right
+>         mkdir $sugar-$temperature
 >     done
 > done
 > ~~~
-
