@@ -26,7 +26,8 @@ a bunch of commands saved in a file is usually called a **shell script**,
 but make no mistake:
 these are actually small programs.
 
-Let's start by going back to `molecules/` and putting the following line into a new file, `middle.sh`:
+Let's start by going back to `molecules/` and creating a new file, `middle.sh` which will
+become our shell script:
 
 ~~~
 $ cd molecules
@@ -37,7 +38,7 @@ $ nano middle.sh
 The command `nano middle.sh` opens the file `middle.sh` within the text editor "nano"
 (which runs within the shell).
 If the file does not exist, it will be created.
-We can use the text editor to directly edit the file---we'll simply insert the following line:
+We can use the text editor to directly edit the file -- we'll simply insert the following line:
 
 ~~~
 head -n 15 octane.pdb | tail -n 5
@@ -49,7 +50,8 @@ it selects lines 11-15 of the file `octane.pdb`.
 Remember, we are *not* running it as a command just yet:
 we are putting the commands in a file.
 
-Then we save the file (using `Ctrl-O`), and exit the text editor (using `Ctrl-X`).
+Then we save the file (`Ctrl-O` in nano),
+ and exit the text editor (`Ctrl-X` in nano).
 Check that the directory `molecules` now contains a file called `middle.sh`.
 
 Once we have saved the file,
@@ -210,7 +212,10 @@ head -n "$2" "$1" | tail -n "$3"
 
 A comment starts with a `#` character and runs to the end of the line.
 The computer ignores comments,
-but they're invaluable for helping people understand and use scripts.
+but they're invaluable for helping people (including your future self) understand and use scripts.
+The only caveat is that each time you modify the script,
+you should check that the comment is still accurate:
+an explanation that sends the reader in the wrong direction is worse than none at all.
 
 What if we want to process many files in a single pipeline?
 For example, if we want to sort our `.pdb` files by length, we would type:
@@ -290,34 +295,8 @@ $ bash sorted.sh *.pdb ../creatures/*.dat
 > sitting there: the script doesn't appear to do anything.
 {: .callout}
 
-We have two more things to do before we're finished with our simple shell scripts.
-If you look at a script like:
 
-~~~
-$ wc -l "$@" | sort -n
-~~~
-{: .bash}
-
-you can probably puzzle out what it does.
-On the other hand,
-if you look at this script:
-
-~~~
-# List files sorted by number of lines.
-$ wc -l "$@" | sort -n
-~~~
-{: .bash}
-
-you don't have to puzzle it out --- the comment at the top tells you what it does.
-A line or two of documentation like this make it much easier for other people
-(including your future self)
-to re-use your work.
-The only caveat is that each time you modify the script,
-you should check that the comment is still accurate:
-an explanation that sends the reader in the wrong direction is worse than none at all.
-
-Second,
-suppose we have just run a series of commands that did something useful --- for example,
+Suppose we have just run a series of commands that did something useful --- for example,
 that created a graph we'd like to use in a paper.
 We'd like to be able to re-create the graph later if we need to,
 so we want to save the commands in a file.
@@ -399,7 +378,7 @@ it lets the person running it decide what files to process.
 She could have written it as:
 
 ~~~
-# Calculate reduced stats for  A and Site B data files at J = 100 c/bp.
+# Calculate reduced stats for Site A and Site B data files at J = 100 c/bp.
 for datafile in *[AB].txt
 do
     echo $datafile
@@ -444,6 +423,22 @@ Of course, this introduces another tradeoff between flexibility and complexity.
 > 2. The first and the last line of each file ending in `.pdb` in the `molecules` directory
 > 3. The first and the last line of each file in the `molecules` directory
 > 4. An error because of the quotes around `*.pdb`
+>
+> > ## Solution
+> > The correct answer is 2. 
+> >
+> > The special variables $1, $2 and $3 represent the command line arguments given to the
+> > script, such that the commands run are:
+> >
+> > ```
+> > $ head -n 1 cubane.pdb ethane.pdb octane.pdb pentane.pdb propane.pdb
+> > $ tail -n 1 cubane.pdb ethane.pdb octane.pdb pentane.pdb propane.pdb
+> > ```
+> > {: .bash}
+> > The shell does not expand `'*.pdb'` because it is enclosed by quote marks.
+> > As such, the first argument to the script is `'*.pdb'` which gets expanded within the
+> > script by `head` and `tail`.
+> {: .solution}
 {: .challenge}
 
 > ## List Unique Species
@@ -462,10 +457,29 @@ Of course, this introduces another tradeoff between flexibility and complexity.
 > ~~~
 > {: .source}
 >
+> An example of this type of file is given in `data-shell/data/animals.txt`.
+> 
 > Write a shell script called `species.sh` that takes any number of
 > filenames as command-line parameters, and uses `cut`, `sort`, and
 > `uniq` to print a list of the unique species appearing in each of
 > those files separately.
+>
+> > ## Solution
+> >
+> > ```
+> > # Script to find unique species in csv files where species is the second data field
+> > # This script accepts any number of file names as command line arguments
+> >
+> > # Loop over all files
+> > for file in $@ 
+> > do
+> > 	echo "Unique species in $file:"
+> > 	# Extract species names
+> > 	cut -d , -f 2 $file | sort | uniq
+> > done
+> > ```
+> > {: .source}
+> {: .solution}
 {: .challenge}
 
 > ## Find the Longest File With a Given Extension
@@ -482,6 +496,20 @@ Of course, this introduces another tradeoff between flexibility and complexity.
 >
 > would print the name of the `.pdb` file in `/tmp/data` that has
 > the most lines.
+>
+> > ## Solution
+> >
+> > ```
+> > # Shell script which takes two arguments: 
+> > #    1. a directory name
+> > #    2. a file extension
+> > # and prints the name of the file in that directory
+> > # with the most lines which matches the file extension.
+> > 
+> > wc -l $1/*.$2 | sort -n | tail -n 2 | head -n 1
+> > ```
+> > {: .source}
+> {: .solution}
 {: .challenge}
 
 > ## Why Record Commands in the History Before Running Them?
@@ -497,14 +525,22 @@ Of course, this introduces another tradeoff between flexibility and complexity.
 > the shell has added `history` to the command log before actually
 > running it. In fact, the shell *always* adds commands to the log
 > before running them. Why do you think it does this?
+>
+> > ## Solution
+> > If a command causes something to crash or hang, it might be useful
+> > to know what that command was, in order to investigate the problem.
+> > Were the command only be recorded after running it, we would not
+> > have a record of the last command run in the event of a crash.
+> {: .solution}
 {: .challenge}
 
 > ## Script Reading Comprehension
 >
-> Joel's `data` directory contains three files: `fructose.dat`,
-> `glucose.dat`, and `sucrose.dat`. Explain what a script called
-> `example.sh` would do when run as `bash example.sh *.dat` if it
-> contained the following lines:
+> For this question, consider the `data-shell/molecules` directory once again.
+> This contains a number of `.pdb` files in addition to any other files you
+> may have created.
+> Explain what a script called `example.sh` would do when run as
+> `bash example.sh *.pdb` if it contained the following lines:
 >
 > ~~~
 > # Script 1
@@ -523,9 +559,20 @@ Of course, this introduces another tradeoff between flexibility and complexity.
 >
 > ~~~
 > # Script 3
-> echo $@.dat
+> echo $@.pdb
 > ~~~
 > {: .bash}
+>
+> > ## Solutions
+> > Script 1 would print out a list of all files containing a dot in their name.
+> >
+> > Script 2 would print the contents of the first 3 files matching the file extension.
+> > The shell expands the wildcard before passing the arguments to the `example.sh` script.
+> > 
+> > Script 3 would print all the arguments to the script (i.e. all the `.pdb` files),
+> > followed by `.pdb`.
+> > cubane.pdb ethane.pdb methane.pdb octane.pdb pentane.pdb propane.pdb.pdb
+> {: .solution}
 {: .challenge}
 
 > ## Debugging Scripts
@@ -560,4 +607,12 @@ Of course, this introduces another tradeoff between flexibility and complexity.
 >
 > What is the output showing you?
 > Which line is responsible for the error?
+>
+> > ## Solution
+> > The `-x` flag causes `bash` to run in debug mode.
+> > This prints out each command as it is run, which will help you to locate errors.
+> > In this example, we can see that `echo` isn't printing anything. We have made a typo
+> > in the loop variable name, and the variable `datfile` doesn't exist, hence returning
+> > an empty string.
+> {: .solution}
 {: .challenge}

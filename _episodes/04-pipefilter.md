@@ -241,6 +241,22 @@ and so on.
 Since `sorted-lengths.txt` contains the lengths of our files ordered from least to greatest,
 the output of `head` must be the file with the fewest lines.
 
+> ## Redirecting to the same file
+>
+> It's a very bad idea to try redirecting
+> the output of a command that operates on a file
+> to the same file. For example:
+>
+> ~~~
+> $ sort -n lengths.txt > lengths.txt
+> ~~~
+> {: .bash}
+>
+> Doing something like this may give you
+> incorrect results and/or delete
+> the contents of `lengths.txt`.
+{: .callout}
+
 If you think this is confusing,
 you're in good company:
 even once you understand what `wc`, `sort`, and `head` do,
@@ -287,7 +303,7 @@ $ wc -l *.pdb | sort -n
 ~~~
 {: .output}
 
-And now we send the output ot this pipe, through another pipe, to `head`, so that the full pipeline becomes:
+And now we send the output of this pipe, through another pipe, to `head`, so that the full pipeline becomes:
 
 ~~~
 $ wc -l *.pdb | sort -n | head -n 1
@@ -311,7 +327,10 @@ Every process has an input channel called **standard input**.
 (By this point, you may be surprised that the name is so memorable, but don't worry:
 most Unix programmers call it "stdin").
 Every process also has a default output channel called **standard output**
-(or "stdout").
+(or "stdout"). A third output channel called **standard error** (stderr) also 
+exists. This channel is typically used for error or diagnostic messages, and it
+allows a user to pipe the output of one program into another while still receiving 
+error messages in the terminal. 
 
 The shell is actually just another program.
 Under normal circumstances,
@@ -503,23 +522,57 @@ so this matches all the valid data files she has.
 > {: .output}
 >
 > Explain why `-n` has this effect.
+>
+> > ## Solution
+> > The `-n` flag specifies a numeric sort, rather than alphabetical.
+> {: .solution}
 {: .challenge}
 
 > ## What Does `<` Mean?
 >
+> Change directory to `data-shell` (the top level of our downloaded example data).
+>
 > What is the difference between:
 >
 > ~~~
-> $ wc -l < mydata.dat
+> $ wc -l notes.txt
 > ~~~
 > {: .bash}
 >
 > and:
 >
 > ~~~
-> $ wc -l mydata.dat
+> $ wc -l < notes.txt
 > ~~~
 > {: .bash}
+>
+> > ## Solution
+> > `<` is used to redirect input to a command. 
+> >
+> > In both examples, the shell returns the number of lines from the input to
+> > the `wc` command.
+> > In the first example, the input is the file `notes.txt` and the file name is
+> > given in the output from the `wc` command.
+> > In the second example, the contents of the file `notes.txt` are redirected to
+> > standard input.
+> > It is as if we have entered the contents of the file by typing at the prompt.
+> > Hence the file name is not given in the output - just the number of lines.
+> > Try this for yourself:
+> >
+> > ```
+> > $ wc -l
+> > this
+> > is
+> > a test
+> > Ctrl-D # This lets the shell know you have finished typing the input
+> > ```
+> > {: .bash}
+> >
+> > ```
+> > 3
+> > ```
+> > {: .output}
+> {: .solution}
 {: .challenge}
 
 > ## What Does `>>` Mean?
@@ -542,7 +595,7 @@ so this matches all the valid data files she has.
 {: .challenge}
 
 > ## More on Wildcards
-> 
+>
 > Sam has a directory containing calibration data, datasets, and descriptions of
 > the datasets:
 >
@@ -575,6 +628,15 @@ so this matches all the valid data files she has.
 > {: .bash}
 >
 > Help Sam by filling in the blanks.
+>
+> > ## Solution
+> > ```
+> > $ cp *calibration.txt /backup/calibration
+> > $ cp 2015-11-* ~/send_to_bob/all_november_files/
+> > $ cp *-23-dataset* ~send_to_bob/all_datasets_created_on_a_23rd/
+> > ```
+> > {: .bash}
+> {: .solution}
 {: .challenge}
 
 > ## Piping Commands Together
@@ -586,12 +648,20 @@ so this matches all the valid data files she has.
 > 2. `wc -l * | sort -n | head -n 1-3`
 > 3. `wc -l * | head -n 3 | sort -n`
 > 4. `wc -l * | sort -n | head -n 3`
+>
+> > ## Solution
+> > Option 4 is the solution.
+> > The pipe character `|` is used to feed the standard output from one process to
+> > the standard input of another.
+> > `>` is used to redirect standard output to a file.
+> > Try it in the `data-shell/molecules` directory!
+> {: .solution}
 {: .challenge}
 
 > ## Why Does `uniq` Only Remove Adjacent Duplicates?
 >
 > The command `uniq` removes adjacent duplicated lines from its input.
-> For example, if a file `salmon.txt` contains:
+> For example, the file `data-shell/data/salmon.txt` contains:
 >
 > ~~~
 > coho
@@ -603,7 +673,7 @@ so this matches all the valid data files she has.
 > ~~~
 > {: .source}
 >
-> then `uniq salmon.txt` produces:
+> Running the command `uniq salmon.txt` from the `data-shell/data` directory produces:
 >
 > ~~~
 > coho
@@ -616,11 +686,18 @@ so this matches all the valid data files she has.
 > Why do you think `uniq` only removes *adjacent* duplicated lines?
 > (Hint: think about very large data sets.) What other command could
 > you combine with it in a pipe to remove all duplicated lines?
+>
+> > ## Solution
+> > ```
+> > $ sort salmon.txt | uniq
+> > ```
+> > {: .bash}
+> {: .solution}
 {: .challenge}
 
 > ## Pipe Reading Comprehension
 >
-> A file called `animals.txt` contains the following data:
+> A file called `animals.txt` (in the `data-shell/data` folder) contains the following data:
 >
 > ~~~
 > 2012-11-05,deer
@@ -640,6 +717,7 @@ so this matches all the valid data files she has.
 > $ cat animals.txt | head -n 5 | tail -n 3 | sort -r > final.txt
 > ~~~
 > {: .bash}
+> Hint: build the pipeline up one command at a time to test your understanding
 {: .challenge}
 
 > ## Pipe Construction
@@ -668,6 +746,13 @@ so this matches all the valid data files she has.
 > What other command(s) could be added to this in a pipeline to find
 > out what animals the file contains (without any duplicates in their
 > names)?
+>
+> > ## Solution
+> > ```
+> > $ cut -d , -f 2 animals.txt | sort | uniq
+> > ```
+> > {: .bash}
+> {: .solution}
 {: .challenge}
 
 > ## Removing Unneeded Files
@@ -682,13 +767,25 @@ so this matches all the valid data files she has.
 > 2. `rm *.txt`
 > 3. `rm * .txt`
 > 4. `rm *.*`
+>
+> > ## Solution
+> > 1. This would remove `.txt` files with one-character names
+> > 2. This is correct answer
+> > 3. The shell would expand `*` to match everything in the current directory,
+> > so the command would try to remove all matched files and an additional
+> > file called `.txt`
+> > 4. The shell would expand `*.*` to match all files with any extension,
+> > so this command would delete all files
+> {: .solution}
 {: .challenge}
 
 > ## Wildcard Expressions
 >
 > Wildcard expressions can be very complex, but you can sometimes write
 > them in ways that only use simple syntax, at the expense of being a bit
-> more verbose.  For example, the wildcard expression `*[AB].txt`
+> more verbose.  
+> Consider the directory `data-shell/north-pacific-gyre/2012-07-03` :
+> the wildcard expression `*[AB].txt`
 > matches all files ending in `A.txt` or `B.txt`. Imagine you forgot about
 > this.
 >
@@ -702,11 +799,24 @@ so this matches all the valid data files she has.
 >
 > 3.  Under what circumstances would your new expression produce an error message
 >     where the original one would not?
+>
+> > ## Solution
+> > 1. 
+> >
+> > ```
+> > $ ls *A.txt
+> > $ ls *B.txt
+> > ```
+> > {: .bash}
+> > 2. The output from the new commands is separated because there are two commands.
+> > 3. When there are no files ending in `A.txt`, or there are no files ending in
+> > `B.txt`.
+> {: .solution}
 {: .challenge}
 
 > ## Which Pipe?
 >
-> A file called animals.txt contains 586 lines of data formatted as follows:
+> The file `data-shell/data/animals.txt` contains 586 lines of data formatted as follows:
 >
 > ~~~
 > 2012-11-05,deer
@@ -717,7 +827,8 @@ so this matches all the valid data files she has.
 > ~~~
 > {: .output}
 >
-> What command would you use to produce a table that shows
+> Assuming your current directory is `data-shell/data/`,
+> what command would you use to produce a table that shows
 > the total count of each type of animal in the file?
 >
 > 1.  `grep {deer, rabbit, raccoon, deer, fox, bear} animals.txt | wc -l`
@@ -726,22 +837,32 @@ so this matches all the valid data files she has.
 > 4.  `cut -d, -f 2 animals.txt | uniq -c`
 > 5.  `cut -d, -f 2 animals.txt | sort | uniq -c`
 > 6.  `cut -d, -f 2 animals.txt | sort | uniq -c | wc -l`
+>
+> > ## Solution
+> > Option 5. is the correct answer.
+> > If you have difficulty understanding why, try running the commands, or sub-sections of
+> > the pipelines (make sure you are in the `data-shell/data` directory).
+> {: .solution}
 {: .challenge}
 
 > ## Appending Data
 >
-> Consider the file `animals.txt`, used in previous exercise. 
-> After these commands, select the alternative that 
-> corresponds the file `animalsUpd.txt`:
+> Consider the file `animals.txt`, used in previous exercise.
+> After these commands, select the answer that
+> corresponds to the file `animalsUpd.txt`:
 >
 > ~~~
 > $ head -3 animals.txt > animalsUpd.txt
 > $ tail -2 animals.txt >> animalsUpd.txt
 > ~~~
 > {: .bash}
-> 
+>
 > 1. The first three lines of `animals.txt`
 > 2. The last two lines of `animals.txt`
 > 3. The first three lines and the last two lines of `animals.txt`
 > 4. The second and third lines of `animals.txt`
+>
+> > ## Solution
+> > 3.
+> {: .solution}
 {: .challenge}
